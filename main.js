@@ -22,7 +22,7 @@
 **  SpiceMainConn
 **      This is the master Javascript class for establishing and
 **  managing a connection to a Spice Server.
-**  
+**
 **      Invocation:  You must pass an object with properties as follows:
 **          uri         (required)  Uri of a WebSocket listener that is
 **                                  connected to a spice server.
@@ -153,7 +153,13 @@ SpiceMainConn.prototype.process_channel_message = function(msg)
             else if (chans.channels[i].type == SPICE_CHANNEL_CURSOR)
                 this.cursor = new SpiceCursorConn(conn);
             else if (chans.channels[i].type == SPICE_CHANNEL_PLAYBACK)
-                this.cursor = new SpicePlaybackConn(conn);
+                this.playback = new SpicePlaybackConn(conn);
+            else if (chans.channels[i].type == SPICE_CHANNEL_PORT)
+            {
+                if (this.ports == undefined) this.ports = [];
+                var len = this.ports.push(new SpicePortConn(conn));
+                this.ports[len-1].idx = len - 1;
+            }
             else
             {
                 if (! ("extra_channels" in this))
@@ -478,9 +484,3 @@ SpiceMainConn.prototype.handle_mouse_mode = function(current, supported)
         this.inputs.mouse_mode = current;
 }
 
-/* Shift current time to attempt to get a time matching that of the server */
-SpiceMainConn.prototype.relative_now = function()
-{
-    var ret = (Date.now() - this.our_mm_time) + this.mm_time;
-    return ret;
-}
