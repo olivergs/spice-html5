@@ -60,6 +60,9 @@ SpicePortConn.prototype.process_channel_message = function(msg)
       // Call correspondent channel listener
       return true;
     }
+    else {
+      console.log('OLIVER: SPICE MESSAGE TYPE NOT RECOGNIZED - ' + msg)
+    }
 
     return false;
 }
