@@ -52,6 +52,11 @@ SpicePortConn.prototype.process_channel_message = function(msg)
     else if (msg.type == SPICE_MSG_SPICEVMC_DATA)
     {
       console.log('OLIVER: SPICE_MSG_SPICEVMC_DATA!!', msg, this.idx);
+
+      // convert message ArrayBuffer to text
+      var msg_text = new TextDecoder('utf-8').decode(new Uint8Array(msg.data));
+      console.log('OLIVER: MESSAGE TEXT', msg_text)
+
       // Call correspondent channel listener
       return true;
     }
