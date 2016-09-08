@@ -59,6 +59,7 @@ function SpiceMainConn()
     this.file_xfer_tasks = {};
     this.file_xfer_task_id = 0;
     this.file_xfer_read_queue = [];
+    this.ports = [];
 }
 
 SpiceMainConn.prototype = Object.create(SpiceConn.prototype);
@@ -155,11 +156,7 @@ SpiceMainConn.prototype.process_channel_message = function(msg)
             else if (chans.channels[i].type == SPICE_CHANNEL_PLAYBACK)
                 this.playback = new SpicePlaybackConn(conn);
             else if (chans.channels[i].type == SPICE_CHANNEL_PORT)
-            {
-                if (this.ports == undefined) this.ports = [];
-                var len = this.ports.push(new SpicePortConn(conn));
-                this.ports[len-1].idx = len - 1;
-            }
+                this.ports.push(new SpicePortConn(conn));
             else
             {
                 if (! ("extra_channels" in this))
@@ -484,3 +481,9 @@ SpiceMainConn.prototype.handle_mouse_mode = function(current, supported)
         this.inputs.mouse_mode = current;
 }
 
+/* Shift current time to attempt to get a time matching that of the server */
+SpiceMainConn.prototype.relative_now = function()
+{
+    var ret = (Date.now() - this.our_mm_time) + this.mm_time;
+    return ret;
+}
