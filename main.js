@@ -59,6 +59,7 @@ function SpiceMainConn()
     this.file_xfer_tasks = {};
     this.file_xfer_task_id = 0;
     this.file_xfer_read_queue = [];
+    this.ports = [];
 }
 
 SpiceMainConn.prototype = Object.create(SpiceConn.prototype);
@@ -156,9 +157,7 @@ SpiceMainConn.prototype.process_channel_message = function(msg)
                 this.playback = new SpicePlaybackConn(conn);
             else if (chans.channels[i].type == SPICE_CHANNEL_PORT)
             {
-                if (this.ports == undefined) this.ports = [];
-                var len = this.ports.push(new SpicePortConn(conn));
-                this.ports[len-1].idx = len - 1;
+                this.ports.push(new SpicePortConn(conn));
             }
             else
             {
@@ -483,4 +482,3 @@ SpiceMainConn.prototype.handle_mouse_mode = function(current, supported)
     if (this.inputs)
         this.inputs.mouse_mode = current;
 }
-
